@@ -40,3 +40,7 @@ def get_tracks():
     tracks = db.query(Music).all()
     db.close()
     return tracks
+    
+@app.get("/")
+def root():
+    return {"message": "Loop Backend is live"}
