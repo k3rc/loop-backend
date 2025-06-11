@@ -18,21 +18,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.post("/upload")
-async def upload_music(title: str = Form(...), artist: str = Form(...), file: UploadFile = File(...)):
-    db = SessionLocal()
-    filename = file.filename
-    save_path = f"uploads/{filename}"
-    with open(save_path, "wb") as buffer:
+UPLOAD_FOLDER = "uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+@app.post("/upload/")
+async def upload_music(file: UploadFile = File(...)):
+    filepath = os.path.join(UPLOAD_FOLDER, file.filename)
+    with open(filepath, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
-
-    music = Music(title=title, artist=artist, filename=filename)
-    db.add(music)
-    db.commit()
-    db.refresh(music)
-    db.close()
-
-    return {"message": "Uploaded successfully", "track_id": music.id}
+    return {"filename": file.filename, "url": f"/files/{file.filename}"}
 
 @app.get("/tracks")
 def get_tracks():
