@@ -44,7 +44,3 @@ def get_tracks():
 @app.get("/")
 def root():
     return {"message": "Loop Backend is live"}
-
-@app.get("/")
-def root():
-    return JSONResponse(content={"message": "Loop backend is running"})
