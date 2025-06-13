@@ -1,12 +1,9 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
-import os
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
-DB_URL = os.getenv("DATABASE_URL", "sqlite:///./music.db")
-engine  = create_engine(DB_URL, connect_args={"check_same_thread": False})
-Session = sessionmaker(bind=engine, autocommit=False, autoflush=False)
-Base    = declarative_base()
+DATABASE_URL = "sqlite:///./music.db"
 
-def init_db():
-    from models import User, Track          # noqa
-    Base.metadata.create_all(bind=engine)
+engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
