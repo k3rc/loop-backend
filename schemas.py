@@ -3,12 +3,14 @@ from pydantic import BaseModel
 class TrackCreate(BaseModel):
     title: str
     artist: str
-    genre: str
     album: str
-    filename: str
-    cover: str
+    genre: str
+    cover_url: str
+    user_id: str
 
-class TrackOut(TrackCreate):
+class TrackResponse(TrackCreate):
     id: int
+    filename: str
+
     class Config:
         orm_mode = True
