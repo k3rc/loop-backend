@@ -12,4 +12,7 @@ class Track(Base):
     id       = Column(Integer, primary_key=True, index=True)
     title    = Column(String)
     artist   = Column(String)
+    genre    = Column(String)
+    album    = Column(String)
     filename = Column(String)
+    cover    = Column(String)
