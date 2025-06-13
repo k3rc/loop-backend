@@ -1,5 +1,4 @@
 import os
-
-BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
-UPLOAD_FOLDER = "uploads"
-ALLOWED_EXTENSIONS = {"mp3", "wav", "ogg"}
+SECRET_KEY = os.getenv("SECRET_KEY", "secretkey")
+ALGORITHM = "HS256"
+UPLOAD_DIR = "uploads"
