@@ -18,7 +18,7 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=https://loop-frontend-three.vercel.app,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -71,3 +71,20 @@ def get_tracks(token: str, db=Depends(get_db)):
 @app.get("/")
 def root():
     return {"status": "ok"}
+
+import os
+
+@app.get("/tracks")
+def get_tracks():
+    uploads_dir = "uploads"
+    tracks = []
+    for filename in os.listdir(uploads_dir):
+        if filename.endswith(".mp3") or filename.endswith(".wav"):
+            track_url = f"https://loop-backend-b9ct.onrender.com/uploads/{filename}"
+            tracks.append({
+                "title": filename,
+                "artist": "Unknown",
+                "url": track_url
+            })
+    return tracks
+
