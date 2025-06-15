@@ -4,4 +4,4 @@ python-multipart
 sqlalchemy
 pydantic>=2.0
 passlib[bcrypt]
-python-jose[cryptography]   # ← правильный пакет
+python-jose[cryptography]
