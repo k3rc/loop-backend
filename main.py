@@ -11,8 +11,6 @@ import shutil, os
 Track.metadata.create_all(bind=engine)
 app = FastAPI()
 
-pp = FastAPI()
-
 origins = [
     "https://loop-frontend-three.vercel.app",
     "http://localhost:3000",
