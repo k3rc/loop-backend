@@ -64,4 +64,4 @@ async def upload_track(
     user_id = verify_token(token)
 
     # 2) сохранение файлов
-    audio_path = os.path.join(UPLOAD_DIR, file.filena
+audio_path = os.path.join(UPLOAD_DIR, file.filename)
