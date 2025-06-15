@@ -10,5 +10,6 @@ class TrackOut(BaseModel):
     cover: str
     user_id: int
 
-    class Config:
-        orm_mode = True
+    model_config = {
+        "from_attributes": True
+    }
