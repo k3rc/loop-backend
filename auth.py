@@ -1,20 +1,25 @@
 import hashlib
+import os
+from dotenv import load_dotenv
 
-# Секретный ключ, должен совпадать с тем, что используется в Telegram WebApp
-BOT_TOKEN = "7812495971:AAFNTowxTUrHda4Nsih8DzIzEQjVS8sWxIk"  # Заменить на твой токен
+load_dotenv()
 
-# Простейшая проверка токена Telegram (в будущем можно заменить на JWT или OAuth)
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+
+if not BOT_TOKEN:
+    raise RuntimeError("❌ BOT_TOKEN не найден в переменных окружения (.env)")
+
 def verify_token(token: str) -> int:
     """
-    Простая проверка токена Telegram. Здесь он должен быть в формате 'uid:sha256(uid + secret)'.
-    Возвращает user_id, если токен корректный. Иначе — None.
+    Проверка токена Telegram вида 'uid:sha256(uid + BOT_TOKEN)'.
+    Возвращает UID, если токен валиден, иначе выбрасывает исключение.
     """
     try:
         uid_part, hash_part = token.split(":")
         uid = int(uid_part)
-        secret = BOT_TOKEN.encode()
-        expected_hash = hashlib.sha256(f"{uid}{secret.decode()}".encode()).hexdigest()
-        if expected_hash == hash_part:
-            return uid
-    except Exception:
-        return None
+        expected_hash = hashlib.sha256(f"{uid}{BOT_TOKEN}".encode()).hexdigest()
+        if expected_hash != hash_part:
+            raise ValueError("Неверный токен")
+        return uid
+    except Exception as e:
+        raise ValueError("Невалидный токен") from e
