@@ -24,7 +24,7 @@ Base.metadata.create_all(bind=engine)
 # ──────────────────────────────────────────────
 # APP и CORS
 # ──────────────────────────────────────────────
-app = FastAPI(title="Loop Backend")
+app = FastAPI(title="Loop Backend")
 
 origins = [
     "https://loop-frontend-three.vercel.app",
@@ -62,23 +62,38 @@ async def upload_track(
 ):
     # 1) авторизация
     user_id = verify_token(token)
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid token")
 
     # 2) сохранение файлов
-audio_path = os.path.join(UPLOAD_DIR, file.filename)
-# schemas.py
+    audio_path = os.path.join(UPLOAD_DIR, file.filename)
+    cover_path = os.path.join(UPLOAD_DIR, cover.filename)
 
-from pydantic import BaseModel
+    with open(audio_path, "wb") as f:
+        shutil.copyfileobj(file.file, f)
+    with open(cover_path, "wb") as f:
+        shutil.copyfileobj(cover.file, f)
 
-class TrackOut(BaseModel):
-    id: int
-    title: str
-    artist: str
-    album: str
-    genre: str
-    file: str
-    cover: str
-    user_id: int
+    # 3) запись в базу
+    track = Track(
+        title=title,
+        artist=artist,
+        album=album,
+        genre=genre,
+        file="/" + audio_path.replace("\\", "/"),   # для URL
+        cover="/" + cover_path.replace("\\", "/"),
+        user_id=user_id,
+    )
+    db.add(track)
+    db.commit()
+    db.refresh(track)
 
-    class Config:
-        orm_mode = True
+    return track
 
+# ──────────────────────────────────────────────
+# Роут: получить список треков
+# ──────────────────────────────────────────────
+@app.get("/tracks", response_model=List[TrackOut])
+def list_tracks(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    tracks = db.query(Track).offset(skip).limit(limit).all()
+    return tracks
