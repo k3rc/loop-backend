@@ -97,3 +97,7 @@ async def upload_track(
 def list_tracks(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     tracks = db.query(Track).offset(skip).limit(limit).all()
     return tracks
+
+@app.get("/")
+def root():
+    return {"status": "Loop API running"}
