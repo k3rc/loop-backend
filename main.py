@@ -62,3 +62,7 @@ async def upload_track(
 def get_tracks(token: str, db=Depends(get_db)):
     user_id = verify_token(token)
     return db.query(Track).filter(Track.user_id == user_id).all()
+
+@app.get("/")
+def root():
+    return {"status": "ok"}
